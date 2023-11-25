@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "glad/glad.h"
+#include "include/glad/glad.h"
 #include <GLFW/glfw3.h>
 
 static std::string read_file(const std::string &path) {
@@ -37,25 +37,33 @@ int main() {
     glViewport(0, 0, 800, 800);
 
 
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
     GLuint vbo;
     glGenBuffers(1, &vbo);
-
-    GLfloat verticies[] = {
-        -0.5f, -0.5f, 0, 1.0, 0.0, 0.0,
-        0.5, -0.5f, 0,   0.0, 1.0, 0.0,
-        0.0f, 0.5f, 0,   0.0, 0.0, 1.0,
-    };
-
-    glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
+    GLfloat verticies[] = {
+        -0.5f, -0.5f, 0, 0.0f, 0.0f, 0.7f,
+        0.5, -0.5f, 0,   0.0f, 0.0f, 0.7f,
+        0.5f, 0.5f, 0,   0.0f, 0.0f, 0.7f,
+        -0.5f, 0.5f, 0,  0.0f, 0.0f, 0.7f,
+    };
     glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
+
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, NULL);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void *)(sizeof(float) * 3));
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+
+    GLuint indicies[] = {
+        0, 1, 2,
+        2, 3, 0,
+    };
+    GLuint ebo;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
 
     std::string vert_src = read_file("shader.vert");
     std::string frag_src = read_file("shader.frag");
@@ -78,21 +86,23 @@ int main() {
     glUseProgram(program);
     glClearColor(0, 0, 0, 1);
 
-    float scale = 0.0f;
+    float scale = 1.0f;
 
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        scale += 0.01f;
-        if (scale > 1.0f)
-            scale = 0.0f;
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+        //scale += 0.01f;
+        //if (scale > 1.0f)
+            // scale = 0.0f;
         glUniform1f(scale_loc, scale);
 
         glfwSwapBuffers(window);
+        glfwPollEvents();
     }
 
     glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ebo);
 
     glDeleteProgram(program);
 
