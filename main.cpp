@@ -46,7 +46,16 @@ int main() {
         0.5f, 0.5f, 0,   0.0f, 0.0f, 0.7f,
         -0.5f, 0.5f, 0,  0.0f, 0.0f, 0.7f,
     };
-    glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
+
+    GLfloat verticies_hexagon[] = {
+        -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.7f,
+        -0.25f, -0.5f, 0.0f,   0.0f, 0.0f, 0.7f,
+        0.25f, -0.5f, 0.0f,   0.0f, 0.0f, 0.7f,
+        0.5f, 0.0f, 0.0f,  0.0f, 0.0f, 0.7f,
+        0.25f, 0.5f, 0.0f,  0.0f, 0.0f, 0.7f,
+        -0.25f, 0.5f, 0.0f,  0.0f, 0.0f, 0.7f,
+    };
+    glBufferData(GL_ARRAY_BUFFER, sizeof(verticies_hexagon), verticies_hexagon, GL_STATIC_DRAW);
 
     GLuint vao;
     glGenVertexArrays(1, &vao);
@@ -59,6 +68,8 @@ int main() {
     GLuint indicies[] = {
         0, 1, 2,
         2, 3, 0,
+        0, 3, 5,
+        5, 3, 4,
     };
     GLuint ebo;
     glGenBuffers(1, &ebo);
@@ -90,7 +101,7 @@ int main() {
 
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, NULL);
         //scale += 0.01f;
         //if (scale > 1.0f)
             // scale = 0.0f;
